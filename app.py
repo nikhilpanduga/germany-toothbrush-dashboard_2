@@ -9,10 +9,9 @@ import streamlit as st
 warnings.filterwarnings("ignore")
 
 
-# ============================================================
-# PAGE CONFIG
-# ============================================================
-
+# =========================================================
+# Configuration
+# =========================================================
 st.set_page_config(
     page_title="Germany Toothbrush Customer Review Dashboard",
     page_icon="🪥",
@@ -20,16 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-
-# ============================================================
-# FILE / DATA CONFIG
-# ============================================================
-
-DATA_FILE = (
-    Path(__file__).parent
-    / "Germany_five toothbrush data.xlsx"
-)
-
+DATA_FILE = Path(__file__).parent / "Germany_five toothbrush data.xlsx"
 SHEET_NAME = "Germany"
 
 
@@ -58,265 +48,94 @@ THEME_COLS = {
 }
 
 
-# ============================================================
-# COLOR PALETTE
-# ============================================================
-
-# Stronger contrast than the previous version.
-# Still professional and not excessively bright.
-
-NAVY = "#173B5E"
-DARK_BLUE = "#234F73"
-BLUE = "#2F5D8C"
-MEDIUM_BLUE = "#4F81BD"
-LIGHT_BLUE = "#6F98BD"
-PALE_BLUE = "#8EABC2"
-
-POSITIVE = "#3F7D4A"
-NEUTRAL = "#7A858D"
-NEGATIVE = "#B84A4A"
-
-BACKGROUND = "#EEF2F5"
-CARD = "#FFFFFF"
-BORDER = "#C8D4DE"
-GRID = "#D6E0E7"
-TEXT = "#34495A"
-MUTED = "#637586"
+COLORS = {
+    "positive": "#2E7D32",
+    "neutral": "#90A4AE",
+    "negative": "#C62828",
+}
 
 
 PRODUCT_COLORS = [
     "#2F5D8C",
     "#4F81BD",
-    "#6793B5",
-    "#7FA3BD",
-    "#9AB7CA",
+    "#6FA3D2",
+    "#8DB5D8",
+    "#B4C7DC",
 ]
 
 
-# ============================================================
-# CSS
-# ============================================================
-
+# =========================================================
+# Styling
+# =========================================================
 st.markdown(
-    f"""
+    """
     <style>
 
-    /* ======================================================
-       PAGE
-    ====================================================== */
-
-    .stApp {{
-        background-color: {BACKGROUND};
-    }}
-
-    .block-container {{
-        max-width: 1500px;
-        padding-top: 1.15rem;
-        padding-bottom: 2rem;
-    }}
-
-
-    /* ======================================================
-       HEADER
-    ====================================================== */
-
-    .dashboard-header {{
-        background: linear-gradient(
-            135deg,
-            {NAVY} 0%,
-            {BLUE} 100%
-        );
-
-        padding: 23px 28px;
-
-        border-radius: 10px;
-
-        margin-bottom: 20px;
-
-        box-shadow:
-            0 3px 7px rgba(23, 59, 94, 0.15);
-    }}
-
-    .dashboard-title {{
-        color: #FFFFFF;
-
-        font-size: 29px;
-
-        font-weight: 700;
-
-        line-height: 1.2;
-
-        letter-spacing: -0.2px;
-    }}
-
-    .dashboard-subtitle {{
-        color: #DCE7F0;
-
-        font-size: 14px;
-
-        margin-top: 6px;
-    }}
-
-
-    /* ======================================================
-       SECTION HEADINGS
-    ====================================================== */
-
-    .section-title {{
-        color: {NAVY};
-
-        font-size: 20px;
-
-        font-weight: 700;
-
-        margin-top: 25px;
-
-        margin-bottom: 10px;
-
-        padding-bottom: 7px;
-
-        border-bottom:
-            2px solid {BORDER};
-    }}
-
-
-    /* ======================================================
-       KPI CARDS
-    ====================================================== */
-
-    [data-testid="stMetric"] {{
-        background-color: {CARD};
-
-        border:
-            1px solid {BORDER};
-
-        border-radius: 9px;
-
-        padding: 13px 16px;
-
-        min-height: 96px;
-
-        box-shadow:
-            0 2px 4px
-            rgba(35, 79, 115, 0.07);
-    }}
-
-    [data-testid="stMetricLabel"] {{
-        color: {MUTED} !important;
-
-        font-size: 12px !important;
-
-        font-weight: 600 !important;
-    }}
-
-    [data-testid="stMetricValue"] {{
-        color: {NAVY} !important;
-
-        font-size: 27px !important;
-
-        font-weight: 700 !important;
-    }}
-
-
-    /* ======================================================
-       DATA VALIDATION CARD
-       ====================================================== */
-
-    .validation-card {{
-        background: #E1E8EE;
-
-        border:
-            1px solid #B9C8D5;
-
-        border-radius: 7px;
-
-        padding: 8px 13px;
-
-        margin-top: 10px;
-
-        margin-bottom: 4px;
-
-        color: {NAVY};
-
-        font-size: 12px;
-    }}
-
-    .validation-number {{
-        font-weight: 700;
-
-        color: {NAVY};
-    }}
-
-
-    /* ======================================================
-       SIDEBAR
-       ====================================================== */
-
-    section[data-testid="stSidebar"] {{
-        background-color: #E1E7EC;
-
-        border-right:
-            1px solid #C5D0DA;
-    }}
-
-    section[data-testid="stSidebar"] h2 {{
-        color: {NAVY};
-    }}
-
-    .sidebar-note {{
-        color: #536878;
-
-        font-size: 12px;
-
-        line-height: 1.55;
-    }}
-
-
-    /* ======================================================
-       BUTTONS
-       ====================================================== */
-
-    .stButton > button {{
-        background-color: #FFFFFF;
-
-        color: {NAVY};
-
-        border:
-            1px solid #AABBC9;
-
-        border-radius: 6px;
-
-        font-weight: 600;
-    }}
-
-    .stButton > button:hover {{
-        background-color: #E7EEF3;
-
-        color: {NAVY};
-
-        border-color: #6D8AA2;
-    }}
-
-
-    /* ======================================================
-       TABLE
-       ====================================================== */
-
-    [data-testid="stDataFrame"] {{
-        border:
-            1px solid {BORDER};
-
-        border-radius: 8px;
-    }}
-
-
-    /* ======================================================
-       SUB HEADINGS
-       ====================================================== */
-
-    h3 {{
-        color: {DARK_BLUE} !important;
-    }}
+        .block-container {
+            padding-top: 1.5rem;
+            padding-bottom: 2rem;
+            max-width: 1500px;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(
+                135deg,
+                #173B5E,
+                #2F5D8C
+            );
+            padding: 24px 30px;
+            border-radius: 14px;
+            margin-bottom: 22px;
+            color: white;
+        }
+
+        .dashboard-header h1 {
+            color: white;
+            margin: 0 0 5px 0;
+            font-size: 30px;
+        }
+
+        .dashboard-header p {
+            color: #E2E8F0;
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .section-title {
+            color: #173B5E;
+            font-size: 21px;
+            font-weight: 700;
+            margin: 24px 0 10px 0;
+            padding-bottom: 7px;
+            border-bottom: 2px solid #E2E8F0;
+        }
+
+        [data-testid="stMetric"] {
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+
+        [data-testid="stMetricLabel"] {
+            color: #64748B !important;
+            font-size: 13px !important;
+        }
+
+        [data-testid="stMetricValue"] {
+            color: #173B5E !important;
+            font-size: 28px !important;
+        }
+
+        div[data-testid="stSidebar"] {
+            background-color: #F8FAFC;
+        }
+
+        .sidebar-note {
+            color: #64748B;
+            font-size: 12px;
+            line-height: 1.5;
+        }
 
     </style>
     """,
@@ -324,40 +143,27 @@ st.markdown(
 )
 
 
-# ============================================================
-# LOAD DATA
-# ============================================================
-
+# =========================================================
+# Data Loading and Cleaning
+# =========================================================
 @st.cache_data
 def load_data():
 
     if not DATA_FILE.exists():
-
         raise FileNotFoundError(
-            f"Could not find '{DATA_FILE.name}'. "
-            "Place the Excel file in the same folder as app.py."
+            f"'{DATA_FILE.name}' was not found. "
+            "Keep the Excel file in the same folder as app.py."
         )
-
 
     data = pd.read_excel(
         DATA_FILE,
-        sheet_name=SHEET_NAME,
+        sheet_name=SHEET_NAME
     )
 
-
-    # --------------------------------------------------------
-    # Clean column names
-    # --------------------------------------------------------
-
     data.columns = [
-        str(column).strip()
-        for column in data.columns
+        str(c).strip()
+        for c in data.columns
     ]
-
-
-    # --------------------------------------------------------
-    # Required columns
-    # --------------------------------------------------------
 
     required_columns = [
         "Product Name given",
@@ -366,70 +172,59 @@ def load_data():
         "Posted On",
         "Stars",
         "Sentiment",
+        *THEME_COLS.values(),
     ]
 
-    required_columns.extend(
-        THEME_COLS.values()
-    )
-
-
-    missing = [
+    missing_columns = [
         column
         for column in required_columns
         if column not in data.columns
     ]
 
-
-    if missing:
-
+    if missing_columns:
         raise ValueError(
-            "These required columns are missing:\n"
+            "Missing required columns:\n"
             + "\n".join(
                 f"- {column}"
-                for column in missing
+                for column in missing_columns
             )
         )
 
-
-    # --------------------------------------------------------
-    # IMPORTANT:
-    # Use exact product values from Excel.
-    # Do NOT use contains() or partial matching.
-    # --------------------------------------------------------
+    # -----------------------------------------------------
+    # Product standardization
+    # -----------------------------------------------------
+    product_map = {
+        "curaprox 5460": "curaprox 5460",
+        "Dr. Best Clean Pro Zwischenzahn":
+            "Dr. Best Clean Pro Zwischenzahn",
+        "elmex expert precision":
+            "elmex expert precision",
+        "elmex InterX":
+            "elmex InterX",
+        "meridol base":
+            "meridol base",
+    }
 
     data["Product"] = (
         data["Product Name given"]
-        .astype("string")
+        .astype(str)
         .str.strip()
+        .replace(product_map)
     )
 
+    # -----------------------------------------------------
+    # Brand / Site
+    # -----------------------------------------------------
+    for column in ["Brand", "Site"]:
+        data[column] = (
+            data[column]
+            .astype(str)
+            .str.strip()
+        )
 
-    # --------------------------------------------------------
-    # Brand
-    # --------------------------------------------------------
-
-    data["Brand"] = (
-        data["Brand"]
-        .astype("string")
-        .str.strip()
-    )
-
-
-    # --------------------------------------------------------
-    # Site
-    # --------------------------------------------------------
-
-    data["Site"] = (
-        data["Site"]
-        .astype("string")
-        .str.strip()
-    )
-
-
-    # --------------------------------------------------------
-    # Sentiment
-    # --------------------------------------------------------
-
+    # -----------------------------------------------------
+    # Sentiment standardization
+    # -----------------------------------------------------
     sentiment_map = {
         "positive": "positive",
         "pos": "positive",
@@ -439,40 +234,17 @@ def load_data():
         "neg": "negative",
     }
 
-
     data["Sentiment"] = (
         data["Sentiment"]
-        .astype("string")
+        .astype(str)
         .str.strip()
         .str.lower()
         .map(sentiment_map)
     )
 
-
-    # --------------------------------------------------------
-    # Stars
-    # --------------------------------------------------------
-
-    data["Stars"] = pd.to_numeric(
-        data["Stars"],
-        errors="coerce",
-    )
-
-
-    # --------------------------------------------------------
-    # Posted On
-    # --------------------------------------------------------
-
-    data["Posted On"] = pd.to_datetime(
-        data["Posted On"],
-        errors="coerce",
-    )
-
-
-    # --------------------------------------------------------
-    # Theme normalization
-    # --------------------------------------------------------
-
+    # -----------------------------------------------------
+    # Theme standardization
+    # -----------------------------------------------------
     yes_values = {
         "yes",
         "y",
@@ -487,12 +259,10 @@ def load_data():
         "0",
     }
 
-
-    def normalize_theme(value):
+    def normalize_yes_no(value):
 
         if pd.isna(value):
             return np.nan
-
 
         value = (
             str(value)
@@ -500,51 +270,39 @@ def load_data():
             .lower()
         )
 
-
         if value in yes_values:
             return "Yes"
-
 
         if value in no_values:
             return "No"
 
-
         return np.nan
-
 
     for column in THEME_COLS.values():
 
-        data[column] = (
-            data[column]
-            .apply(normalize_theme)
+        data[column] = data[column].apply(
+            normalize_yes_no
         )
 
-
-    # --------------------------------------------------------
-    # KEEP EXACTLY FIVE PRODUCTS
-    # --------------------------------------------------------
-
-    data = data[
-        data["Product"].isin(
-            PRODUCT_ORDER
-        )
-    ].copy()
-
-
-    # --------------------------------------------------------
-    # REMOVE EXACT DUPLICATE ROWS ONLY
-    # --------------------------------------------------------
-
-    data = (
-        data
-        .drop_duplicates()
-        .reset_index(drop=True)
+    # -----------------------------------------------------
+    # Dates and ratings
+    # -----------------------------------------------------
+    data["Posted On"] = pd.to_datetime(
+        data["Posted On"],
+        errors="coerce"
     )
 
+    data["Stars"] = pd.to_numeric(
+        data["Stars"],
+        errors="coerce"
+    )
 
-    # --------------------------------------------------------
-    # Product ordering
-    # --------------------------------------------------------
+    # -----------------------------------------------------
+    # Keep only the five expected products
+    # -----------------------------------------------------
+    data = data[
+        data["Product"].isin(PRODUCT_ORDER)
+    ].copy()
 
     data["Product"] = pd.Categorical(
         data["Product"],
@@ -552,57 +310,42 @@ def load_data():
         ordered=True,
     )
 
+    # Remove only exact duplicate rows
+    data = (
+        data
+        .drop_duplicates()
+        .reset_index(drop=True)
+    )
 
     return data
 
 
-# ============================================================
-# LOAD
-# ============================================================
-
+# =========================================================
+# Load Data
+# =========================================================
 try:
 
     df = load_data()
 
-except Exception as error:
+except Exception as exc:
 
     st.error(
-        f"Unable to load the dashboard data:\n\n{error}"
+        f"Unable to load the dashboard data.\n\n{exc}"
     )
 
     st.stop()
 
 
-# ============================================================
-# SOURCE DATA COUNT
-# ============================================================
+# =========================================================
+# Helper Functions
+# =========================================================
+def pct(part, total):
 
-SOURCE_REVIEW_COUNT = len(df)
+    if total == 0:
+        return 0
 
+    return part / total * 100
 
-# ============================================================
-# HELPER
-# ============================================================
-
-def percentage(
-    numerator,
-    denominator,
-):
-
-    if denominator == 0:
-
-        return 0.0
-
-    return (
-        numerator
-        / denominator
-        * 100
-    )
-
-
-# ============================================================
-# FILTER FUNCTION
-# ============================================================
 
 def apply_filters(
     data,
@@ -616,67 +359,37 @@ def apply_filters(
 
     filtered = data.copy()
 
-
-    # --------------------------------------------------------
-    # PRODUCT
-    #
-    # Specific product selections take priority over
-    # "All Products".
-    # --------------------------------------------------------
-
-    selected_specific_products = [
-        product
-        for product in products
-        if product != "All Products"
-    ]
-
-
-    if selected_specific_products:
+    # Product filter
+    if (
+        products
+        and "All Products" not in products
+    ):
 
         filtered = filtered[
-            filtered["Product"].isin(
-                selected_specific_products
-            )
+            filtered["Product"].isin(products)
         ]
 
-
-    # --------------------------------------------------------
-    # BRAND
-    # --------------------------------------------------------
-
+    # Brand filter
     if brands:
 
         filtered = filtered[
-            filtered["Brand"].isin(
-                brands
-            )
+            filtered["Brand"].isin(brands)
         ]
 
-
-    # --------------------------------------------------------
-    # SITE
-    # --------------------------------------------------------
-
+    # Site filter
     if sites:
 
         filtered = filtered[
-            filtered["Site"].isin(
-                sites
-            )
+            filtered["Site"].isin(sites)
         ]
 
-
-    # --------------------------------------------------------
-    # SENTIMENT
-    # --------------------------------------------------------
-
+    # Sentiment filter
     if sentiments:
 
         sentiment_values = [
-            value.lower()
-            for value in sentiments
+            sentiment.lower()
+            for sentiment in sentiments
         ]
-
 
         filtered = filtered[
             filtered["Sentiment"].isin(
@@ -684,11 +397,7 @@ def apply_filters(
             )
         ]
 
-
-    # --------------------------------------------------------
-    # STAR RATING
-    # --------------------------------------------------------
-
+    # Star filter
     if star_range:
 
         filtered = filtered[
@@ -699,49 +408,31 @@ def apply_filters(
             )
         ]
 
-
-    # --------------------------------------------------------
-    # DATE
-    # --------------------------------------------------------
-
+    # Date filter
     if (
         date_range
         and len(date_range) == 2
     ):
 
-        start_date = pd.Timestamp(
-            date_range[0]
-        )
-
-
-        end_date = (
-            pd.Timestamp(
-                date_range[1]
-            )
-            + pd.Timedelta(days=1)
-            - pd.Timedelta(seconds=1)
-        )
-
+        start_date, end_date = date_range
 
         filtered = filtered[
             filtered["Posted On"].between(
-                start_date,
-                end_date,
+                pd.Timestamp(start_date),
+                (
+                    pd.Timestamp(end_date)
+                    + pd.Timedelta(days=1)
+                    - pd.Timedelta(seconds=1)
+                ),
             )
         ]
-
 
     return filtered
 
 
-# ============================================================
-# PLOTLY STANDARD STYLE
-# ============================================================
-
-def style_chart(
+def base_layout(
     fig,
     height=390,
-    show_legend=True,
 ):
 
     fig.update_layout(
@@ -750,109 +441,68 @@ def style_chart(
 
         height=height,
 
-        paper_bgcolor="#FFFFFF",
-
-        plot_bgcolor="#FFFFFF",
-
         margin=dict(
             l=45,
             r=25,
-            t=105,
+            t=60,
             b=50,
         ),
 
         font=dict(
             family="Arial",
             size=12,
-            color=TEXT,
+            color="#334155",
         ),
 
         title=dict(
-
             x=0.02,
-
             xanchor="left",
-
-            y=0.98,
-
-            yanchor="top",
-
             font=dict(
                 size=16,
-                color=NAVY,
+                color="#173B5E",
             ),
+        ),
+
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="left",
+            x=0,
         ),
     )
 
-
-    if show_legend:
-
-        fig.update_layout(
-
-            legend=dict(
-
-                orientation="h",
-
-                yanchor="top",
-
-                y=0.87,
-
-                xanchor="left",
-
-                x=0,
-
-                bgcolor=(
-                    "rgba(255,255,255,0)"
-                ),
-
-                font=dict(
-                    size=10,
-                    color=MUTED,
-                ),
-            )
-        )
-
-
     fig.update_xaxes(
-
         showgrid=True,
-
-        gridcolor=GRID,
-
+        gridcolor="#E2E8F0",
         zeroline=False,
-
-        linecolor="#B8C6D1",
     )
-
 
     fig.update_yaxes(
-
         showgrid=False,
-
         zeroline=False,
-
-        linecolor="#B8C6D1",
     )
-
 
     return fig
 
 
-# ============================================================
-# HEADER
-# ============================================================
-
+# =========================================================
+# Header
+# =========================================================
 st.markdown(
     """
     <div class="dashboard-header">
 
-        <div class="dashboard-title">
+        <h1>
             Germany Toothbrush Customer Review Dashboard
-        </div>
+        </h1>
 
-        <div class="dashboard-subtitle">
+        <p>
             Customer perception, ratings, sentiment and key product themes
-        </div>
+        </p>
 
     </div>
     """,
@@ -860,77 +510,63 @@ st.markdown(
 )
 
 
-# ============================================================
-# SIDEBAR
-# ============================================================
-
+# =========================================================
+# Sidebar Filters
+# =========================================================
 with st.sidebar:
 
     st.markdown(
         "## Dashboard Filters"
     )
 
-
-    # --------------------------------------------------------
+    # -----------------------------------------------------
     # Product
-    # --------------------------------------------------------
+    # -----------------------------------------------------
+    product_options = [
+        "All Products"
+    ] + PRODUCT_ORDER
 
     selected_products = st.multiselect(
-
         "Product",
-
-        [
-            "All Products"
-        ] + PRODUCT_ORDER,
-
-        default=[
-            "All Products"
-        ],
+        product_options,
+        default=["All Products"],
     )
 
-
-    # --------------------------------------------------------
+    # -----------------------------------------------------
     # Brand
-    # --------------------------------------------------------
+    # -----------------------------------------------------
+    brand_options = sorted(
+        df["Brand"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
 
     selected_brands = st.multiselect(
-
         "Brand",
-
-        sorted(
-            df["Brand"]
-            .dropna()
-            .unique()
-            .tolist()
-        ),
+        brand_options,
     )
 
-
-    # --------------------------------------------------------
+    # -----------------------------------------------------
     # Site
-    # --------------------------------------------------------
+    # -----------------------------------------------------
+    site_options = sorted(
+        df["Site"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
 
     selected_sites = st.multiselect(
-
         "Site",
-
-        sorted(
-            df["Site"]
-            .dropna()
-            .unique()
-            .tolist()
-        ),
+        site_options,
     )
 
-
-    # --------------------------------------------------------
+    # -----------------------------------------------------
     # Sentiment
-    # --------------------------------------------------------
-
+    # -----------------------------------------------------
     selected_sentiments = st.multiselect(
-
         "Sentiment",
-
         [
             "Positive",
             "Neutral",
@@ -938,85 +574,54 @@ with st.sidebar:
         ],
     )
 
-
-    # --------------------------------------------------------
-    # Stars
-    # --------------------------------------------------------
-
+    # -----------------------------------------------------
+    # Star Rating
+    # -----------------------------------------------------
     selected_stars = st.slider(
-
         "Star Rating",
-
         min_value=1,
-
         max_value=5,
-
         value=(1, 5),
-
         step=1,
     )
 
-
-    # --------------------------------------------------------
-    # Dates
-    # --------------------------------------------------------
-
+    # -----------------------------------------------------
+    # Review Date
+    # -----------------------------------------------------
     valid_dates = (
         df["Posted On"]
         .dropna()
     )
 
-
-    min_date = (
-        valid_dates
-        .min()
-        .date()
-    )
-
-
-    max_date = (
-        valid_dates
-        .max()
-        .date()
-    )
-
+    min_date = valid_dates.min().date()
+    max_date = valid_dates.max().date()
 
     selected_dates = st.date_input(
-
         "Review Date",
-
         value=(
             min_date,
             max_date,
         ),
-
         min_value=min_date,
-
         max_value=max_date,
     )
 
-
     st.markdown("---")
 
-
-    # --------------------------------------------------------
-    # RESET
-    # --------------------------------------------------------
-
+    # -----------------------------------------------------
+    # Reset
+    # -----------------------------------------------------
     if st.button(
         "Reset Filters",
         use_container_width=True,
     ):
 
         st.session_state.clear()
-
         st.rerun()
 
-
-    # --------------------------------------------------------
-    # Sidebar note
-    # --------------------------------------------------------
-
+    # -----------------------------------------------------
+    # Sidebar information
+    # -----------------------------------------------------
     st.markdown(
         """
         <div class="sidebar-note">
@@ -1028,9 +633,8 @@ with st.sidebar:
 
         <br><br>
 
-        Theme fields with missing values remain
-        missing and are not automatically treated
-        as "No".
+        Missing theme values are kept as missing
+        and are not automatically treated as "No".
 
         </div>
         """,
@@ -1038,480 +642,253 @@ with st.sidebar:
     )
 
 
-# ============================================================
-# FILTER DATA
-# ============================================================
-
+# =========================================================
+# Apply Filters
+# =========================================================
 filtered_df = apply_filters(
-
     df,
-
     selected_products,
-
     selected_brands,
-
     selected_sites,
-
     selected_sentiments,
-
     selected_stars,
-
     selected_dates,
 )
 
 
-# ============================================================
-# EMPTY RESULT
-# ============================================================
+# =========================================================
+# KPI Calculations
+# =========================================================
+total_reviews = len(filtered_df)
 
-if filtered_df.empty:
-
-    st.warning(
-        "No reviews match the selected filters."
-    )
-
-    st.stop()
-
-
-# ============================================================
-# REVIEW COUNT VALIDATION
-# ============================================================
-
-FILTERED_REVIEW_COUNT = len(
-    filtered_df
-)
-
-
-FILTER_PERCENT = percentage(
-    FILTERED_REVIEW_COUNT,
-    SOURCE_REVIEW_COUNT,
-)
-
-
-# ============================================================
-# KPI CALCULATIONS
-# ============================================================
-
-average_rating = (
+avg_rating = (
     filtered_df["Stars"].mean()
+    if total_reviews
+    else np.nan
+)
+
+positive_pct = pct(
+    (
+        filtered_df["Sentiment"]
+        == "positive"
+    ).sum(),
+    total_reviews,
+)
+
+negative_pct = pct(
+    (
+        filtered_df["Sentiment"]
+        == "negative"
+    ).sum(),
+    total_reviews,
+)
+
+if (
+    selected_products
+    and "All Products"
+    not in selected_products
+):
+
+    product_count = len(
+        selected_products
+    )
+
+else:
+
+    product_count = (
+        filtered_df["Product"]
+        .nunique()
+    )
+
+
+# =========================================================
+# KPI Cards
+# =========================================================
+k1, k2, k3, k4, k5 = st.columns(5)
+
+k1.metric(
+    "Total Reviews",
+    f"{total_reviews:,}",
+)
+
+k2.metric(
+    "Average Rating",
+    (
+        f"{avg_rating:.2f}"
+        if not np.isnan(avg_rating)
+        else "—"
+    ),
+)
+
+k3.metric(
+    "Positive Sentiment",
+    f"{positive_pct:.1f}%",
+)
+
+k4.metric(
+    "Negative Sentiment",
+    f"{negative_pct:.1f}%",
+)
+
+k5.metric(
+    "Products",
+    f"{product_count}",
 )
 
 
-positive_count = (
-    filtered_df["Sentiment"]
-    == "positive"
-).sum()
-
-
-negative_count = (
-    filtered_df["Sentiment"]
-    == "negative"
-).sum()
-
-
-five_star_count = (
-    filtered_df["Stars"]
-    == 5
-).sum()
-
-
-low_rating_count = (
-    filtered_df["Stars"]
-    .isin([1, 2])
-).sum()
-
-
-positive_percentage = percentage(
-    positive_count,
-    FILTERED_REVIEW_COUNT,
-)
-
-
-negative_percentage = percentage(
-    negative_count,
-    FILTERED_REVIEW_COUNT,
-)
-
-
-five_star_percentage = percentage(
-    five_star_count,
-    FILTERED_REVIEW_COUNT,
-)
-
-
-low_rating_percentage = percentage(
-    low_rating_count,
-    FILTERED_REVIEW_COUNT,
-)
-
-
-# ============================================================
-# KPI SECTION
-# ============================================================
-
+# =========================================================
+# Product Performance
+# =========================================================
 st.markdown(
-    """
-    <div class="section-title">
-        Key Performance Indicators
-    </div>
-    """,
+    '<div class="section-title">Product Performance</div>',
     unsafe_allow_html=True,
 )
-
-
-k1, k2, k3, k4, k5, k6 = st.columns(6)
-
-
-with k1:
-
-    st.metric(
-        "Total Reviews",
-        f"{FILTERED_REVIEW_COUNT:,}",
-    )
-
-
-with k2:
-
-    st.metric(
-        "Average Rating",
-        f"{average_rating:.2f} / 5",
-    )
-
-
-with k3:
-
-    st.metric(
-        "Positive Sentiment",
-        f"{positive_percentage:.1f}%",
-    )
-
-
-with k4:
-
-    st.metric(
-        "Negative Sentiment",
-        f"{negative_percentage:.1f}%",
-    )
-
-
-with k5:
-
-    st.metric(
-        "5-Star Reviews",
-        f"{five_star_percentage:.1f}%",
-    )
-
-
-with k6:
-
-    st.metric(
-        "1–2 Star Reviews",
-        f"{low_rating_percentage:.1f}%",
-    )
-
-
-# ============================================================
-# DATA VALIDATION LINE
-# ============================================================
-
-st.markdown(
-    f"""
-    <div class="validation-card">
-
-        <span class="validation-number">
-            {FILTERED_REVIEW_COUNT:,}
-        </span>
-
-        filtered reviews out of
-
-        <span class="validation-number">
-            {SOURCE_REVIEW_COUNT:,}
-        </span>
-
-        source reviews
-
-        &nbsp;•&nbsp;
-
-        <span class="validation-number">
-            {FILTER_PERCENT:.1f}%
-        </span>
-
-        of source reviews currently visible
-
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-
-# ============================================================
-# PRODUCT PERFORMANCE
-# ============================================================
-
-st.markdown(
-    """
-    <div class="section-title">
-        Product Performance
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
 
 left, right = st.columns(2)
 
 
-# ============================================================
-# REVIEWS BY PRODUCT
-# ============================================================
-
+# ---------------------------------------------------------
+# Reviews by Product
+# ---------------------------------------------------------
 with left:
 
-    product_review_counts = (
-
+    review_counts = (
         filtered_df
-
         .groupby(
             "Product",
             observed=True,
         )
-
         .size()
-
-        .reindex(
-            PRODUCT_ORDER
-        )
-
+        .reindex(PRODUCT_ORDER)
         .fillna(0)
-
         .astype(int)
-
         .reset_index(
-            name="Reviews",
+            name="Reviews"
         )
     )
-
-
-    product_review_counts = (
-        product_review_counts[
-            product_review_counts["Reviews"] > 0
-        ]
-    )
-
 
     fig = px.bar(
-
-        product_review_counts,
-
+        review_counts,
         x="Reviews",
-
         y="Product",
-
         orientation="h",
-
         text="Reviews",
-
         title="Reviews by Product",
-
         labels={
-            "Reviews":
-                "Number of Reviews",
-
-            "Product":
-                "",
+            "Reviews": "Number of Reviews",
+            "Product": "",
         },
     )
-
 
     fig.update_traces(
-
-        marker_color=MEDIUM_BLUE,
-
+        marker_color="#4F81BD",
         textposition="outside",
-
-        textfont=dict(
-            color=NAVY,
-            size=11,
-        ),
     )
-
 
     fig.update_layout(
-
         yaxis=dict(
-
             categoryorder="array",
-
             categoryarray=PRODUCT_ORDER,
-        ),
-
-        xaxis=dict(
-
-            rangemode="tozero",
-        ),
+        )
     )
 
-
     st.plotly_chart(
-
-        style_chart(
-            fig,
-            show_legend=False,
-        ),
-
+        base_layout(fig),
         use_container_width=True,
-
         config={
-            "displayModeBar": False,
+            "displayModeBar": False
         },
     )
 
 
-# ============================================================
-# AVERAGE RATING
-# ============================================================
-
+# ---------------------------------------------------------
+# Average Rating by Product
+# ---------------------------------------------------------
 with right:
 
-    product_rating = (
-
+    rating_summary = (
         filtered_df
-
         .groupby(
             "Product",
             observed=True,
         )["Stars"]
-
         .mean()
-
-        .reindex(
-            PRODUCT_ORDER
-        )
-
+        .reindex(PRODUCT_ORDER)
         .dropna()
-
         .reset_index(
-            name="Average Rating",
+            name="Average Rating"
         )
     )
-
 
     fig = px.bar(
-
-        product_rating,
-
+        rating_summary,
         x="Average Rating",
-
         y="Product",
-
         orientation="h",
-
-        text=(
-            product_rating[
-                "Average Rating"
-            ]
-            .round(2)
-        ),
-
+        text=rating_summary[
+            "Average Rating"
+        ].round(2),
         title="Average Rating by Product",
-
         labels={
-            "Average Rating":
-                "Average Rating",
-
-            "Product":
-                "",
+            "Average Rating": "Average Rating",
+            "Product": "",
         },
     )
-
 
     fig.update_traces(
-
-        marker_color=BLUE,
-
+        marker_color="#2F5D8C",
         textposition="outside",
-
-        textfont=dict(
-            color=NAVY,
-            size=11,
-        ),
     )
-
 
     fig.update_xaxes(
-        range=[0, 5],
+        range=[0, 5]
     )
-
 
     fig.update_layout(
-
         yaxis=dict(
-
             categoryorder="array",
-
             categoryarray=PRODUCT_ORDER,
-        ),
+        )
     )
 
-
     st.plotly_chart(
-
-        style_chart(
-            fig,
-            show_legend=False,
-        ),
-
+        base_layout(fig),
         use_container_width=True,
-
         config={
-            "displayModeBar": False,
+            "displayModeBar": False
         },
     )
 
 
-# ============================================================
-# CUSTOMER SENTIMENT
-# ============================================================
-
+# =========================================================
+# Customer Sentiment
+# =========================================================
 st.markdown(
-    """
-    <div class="section-title">
-        Customer Sentiment
-    </div>
-    """,
+    '<div class="section-title">Customer Sentiment</div>',
     unsafe_allow_html=True,
 )
-
 
 left, right = st.columns(2)
 
 
-# ============================================================
-# SENTIMENT BY PRODUCT
-# ============================================================
-
+# ---------------------------------------------------------
+# Sentiment by Product
+# ---------------------------------------------------------
 with left:
 
-    sentiment_rows = []
-
+    rows = []
 
     for product in PRODUCT_ORDER:
 
-        product_df = filtered_df[
+        temp = filtered_df[
             filtered_df["Product"]
             == product
         ]
 
+        total = len(temp)
 
-        product_total = len(
-            product_df
-        )
-
-
-        if product_total == 0:
-
+        if total == 0:
             continue
-
 
         for sentiment in [
             "positive",
@@ -1519,113 +896,91 @@ with left:
             "negative",
         ]:
 
-            sentiment_rows.append(
-
+            rows.append(
                 {
-                    "Product":
-                        product,
-
-                    "Sentiment":
-                        sentiment.title(),
-
-                    "Percentage":
-                        percentage(
-
-                            (
-                                product_df[
-                                    "Sentiment"
-                                ]
-                                == sentiment
-                            ).sum(),
-
-                            product_total,
-                        ),
+                    "Product": product,
+                    "Sentiment": sentiment.title(),
+                    "Percentage": pct(
+                        (
+                            temp["Sentiment"]
+                            == sentiment
+                        ).sum(),
+                        total,
+                    ),
                 }
             )
 
-
     sentiment_product = pd.DataFrame(
-        sentiment_rows
+        rows
     )
 
+    if sentiment_product.empty:
 
-    fig = px.bar(
+        st.info(
+            "No data available for the selected filters."
+        )
 
-        sentiment_product,
+    else:
 
-        x="Percentage",
+        fig = px.bar(
+            sentiment_product,
+            x="Percentage",
+            y="Product",
+            color="Sentiment",
+            orientation="h",
+            text=(
+                sentiment_product[
+                    "Percentage"
+                ]
+                .round(0)
+                .astype(int)
+                .astype(str)
+                + "%"
+            ),
+            title="Sentiment by Product",
+            labels={
+                "Percentage": "Share of Reviews (%)",
+                "Product": "",
+            },
+            color_discrete_map={
+                "Positive": COLORS["positive"],
+                "Neutral": COLORS["neutral"],
+                "Negative": COLORS["negative"],
+            },
+        )
 
-        y="Product",
+        fig.update_traces(
+            textposition="inside"
+        )
 
-        color="Sentiment",
+        fig.update_layout(
+            barmode="stack",
+            xaxis=dict(
+                range=[0, 100]
+            ),
+            yaxis=dict(
+                categoryorder="array",
+                categoryarray=PRODUCT_ORDER,
+            ),
+        )
 
-        orientation="h",
-
-        title="Sentiment by Product",
-
-        labels={
-            "Percentage":
-                "Share of Reviews (%)",
-
-            "Product":
-                "",
-        },
-
-        color_discrete_map={
-
-            "Positive":
-                POSITIVE,
-
-            "Neutral":
-                NEUTRAL,
-
-            "Negative":
-                NEGATIVE,
-        },
-    )
-
-
-    fig.update_layout(
-
-        barmode="stack",
-
-        xaxis=dict(
-            range=[0, 100],
-        ),
-
-        yaxis=dict(
-
-            categoryorder="array",
-
-            categoryarray=PRODUCT_ORDER,
-        ),
-    )
-
-
-    st.plotly_chart(
-
-        style_chart(fig),
-
-        use_container_width=True,
-
-        config={
-            "displayModeBar": False,
-        },
-    )
+        st.plotly_chart(
+            base_layout(fig),
+            use_container_width=True,
+            config={
+                "displayModeBar": False
+            },
+        )
 
 
-# ============================================================
-# OVERALL SENTIMENT
-# ============================================================
-
+# ---------------------------------------------------------
+# Overall Sentiment
+# ---------------------------------------------------------
 with right:
 
     sentiment_total = (
-
         filtered_df["Sentiment"]
-
         .value_counts()
-
         .reindex(
             [
                 "positive",
@@ -1633,308 +988,194 @@ with right:
                 "negative",
             ]
         )
-
         .fillna(0)
-
         .reset_index()
     )
-
 
     sentiment_total.columns = [
         "Sentiment",
         "Reviews",
     ]
 
-
-    sentiment_total["Sentiment"] = (
-        sentiment_total["Sentiment"]
-        .str.title()
-    )
-
+    sentiment_total[
+        "Sentiment"
+    ] = sentiment_total[
+        "Sentiment"
+    ].str.title()
 
     fig = px.pie(
-
         sentiment_total,
-
         names="Sentiment",
-
         values="Reviews",
-
         hole=0.58,
-
         title="Overall Sentiment",
-
         color="Sentiment",
-
         color_discrete_map={
-
-            "Positive":
-                POSITIVE,
-
-            "Neutral":
-                NEUTRAL,
-
-            "Negative":
-                NEGATIVE,
+            "Positive": COLORS["positive"],
+            "Neutral": COLORS["neutral"],
+            "Negative": COLORS["negative"],
         },
     )
-
 
     fig.update_traces(
-        textinfo="percent",
-        textfont=dict(
-            size=12,
-        ),
+        textinfo="percent"
     )
 
-
     st.plotly_chart(
-
-        style_chart(
-            fig,
-            show_legend=False,
-        ),
-
+        base_layout(fig),
         use_container_width=True,
-
         config={
-            "displayModeBar": False,
+            "displayModeBar": False
         },
     )
 
 
-# ============================================================
-# CUSTOMER THEMES
-# ============================================================
-
+# =========================================================
+# Customer Themes
+# =========================================================
 st.markdown(
-    """
-    <div class="section-title">
-        What Customers Talk About
-    </div>
-    """,
+    '<div class="section-title">What Customers Talk About</div>',
     unsafe_allow_html=True,
 )
 
-
 theme_rows = []
-
 
 for theme, column in THEME_COLS.items():
 
-    theme_mentions = (
+    count = (
         filtered_df[column]
         == "Yes"
     ).sum()
 
-
     theme_rows.append(
-
         {
-            "Theme":
-                theme,
-
-            "Reviews":
-                int(theme_mentions),
-
-            "Percentage":
-                percentage(
-                    theme_mentions,
-                    FILTERED_REVIEW_COUNT,
-                ),
+            "Theme": theme,
+            "Percentage": pct(
+                count,
+                total_reviews,
+            ),
         }
     )
 
-
 theme_summary = (
-
-    pd.DataFrame(
-        theme_rows
-    )
-
+    pd.DataFrame(theme_rows)
     .sort_values(
         "Percentage",
         ascending=True,
     )
 )
 
-
 fig = px.bar(
-
     theme_summary,
-
     x="Percentage",
-
     y="Theme",
-
     orientation="h",
-
     text=(
         theme_summary["Percentage"]
         .round(1)
         .astype(str)
         + "%"
     ),
-
     title="Customer Theme Importance",
-
     labels={
-        "Percentage":
-            "Reviews Mentioning Theme (%)",
-
-        "Theme":
-            "",
+        "Percentage": "Reviews Mentioning Theme (%)",
+        "Theme": "",
     },
 )
-
 
 fig.update_traces(
-
-    marker_color=MEDIUM_BLUE,
-
+    marker_color="#4F81BD",
     textposition="outside",
-
-    textfont=dict(
-        color=NAVY,
-        size=10,
-    ),
 )
 
-
 st.plotly_chart(
-
-    style_chart(
-        fig,
-        height=410,
-        show_legend=False,
-    ),
-
+    base_layout(fig, 410),
     use_container_width=True,
-
     config={
-        "displayModeBar": False,
+        "displayModeBar": False
     },
 )
 
 
-# ============================================================
-# PRODUCT × THEME HEATMAP
-# ============================================================
-
+# =========================================================
+# Product vs Customer Themes
+# =========================================================
 theme_matrix = pd.DataFrame(
-
     index=PRODUCT_ORDER,
-
     columns=THEMES,
-
     dtype=float,
 )
 
-
 for product in PRODUCT_ORDER:
 
-    product_df = filtered_df[
+    product_data = filtered_df[
         filtered_df["Product"]
         == product
     ]
 
-
     for theme, column in THEME_COLS.items():
-
-        mentions = (
-            product_df[column]
-            == "Yes"
-        ).sum()
-
 
         theme_matrix.loc[
             product,
             theme,
         ] = (
-
-            percentage(
-                mentions,
-                len(product_df),
+            pct(
+                (
+                    product_data[column]
+                    == "Yes"
+                ).sum(),
+                len(product_data),
             )
-
-            if len(product_df) > 0
-
+            if len(product_data)
             else np.nan
         )
 
 
 fig = px.imshow(
-
     theme_matrix,
-
     text_auto=".1f",
-
     aspect="auto",
-
     color_continuous_scale=[
-        "#F0F3F5",
-        "#91ABC0",
+        "#F8FAFC",
+        "#B4C7DC",
         "#2F5D8C",
     ],
-
     title="Product vs Customer Themes",
-
     labels={
-        "color":
-            "Theme Mentions (%)",
+        "color": "Theme Mentions (%)"
     },
 )
-
 
 fig.update_traces(
-
     hovertemplate=(
-
-        "Product: %{y}<br>"
-
-        "Theme: %{x}<br>"
-
-        "Mention Rate: %{z:.1f}%"
-
+        "Product: %{y}"
+        "<br>Theme: %{x}"
+        "<br>Mention: %{z:.1f}%"
         "<extra></extra>"
-    ),
+    )
 )
 
-
 st.plotly_chart(
-
-    style_chart(
-        fig,
-        height=410,
-        show_legend=False,
-    ),
-
+    base_layout(fig, 410),
     use_container_width=True,
-
     config={
-        "displayModeBar": False,
+        "displayModeBar": False
     },
 )
 
 
-# ============================================================
-# THEME SENTIMENT
-# ============================================================
-
+# =========================================================
+# Customer Sentiment by Theme
+# =========================================================
 st.markdown(
-    """
-    <div class="section-title">
-        Customer Sentiment by Theme
-    </div>
-    """,
+    '<div class="section-title">Customer Sentiment by Theme</div>',
     unsafe_allow_html=True,
 )
-
 
 left, right = st.columns(2)
 
 
-for container, sentiment, chart_title in [
+for container, sentiment, title in [
 
     (
         left,
@@ -1950,173 +1191,117 @@ for container, sentiment, chart_title in [
 
 ]:
 
-    sentiment_matrix = pd.DataFrame(
-
+    matrix = pd.DataFrame(
         index=PRODUCT_ORDER,
-
         columns=THEMES,
-
         dtype=float,
     )
 
-
     for product in PRODUCT_ORDER:
 
-        product_df = filtered_df[
+        product_data = filtered_df[
             filtered_df["Product"]
             == product
         ]
 
-
         for theme, column in THEME_COLS.items():
 
-            theme_df = product_df[
-                product_df[column]
+            theme_data = product_data[
+                product_data[column]
                 == "Yes"
             ]
 
-
-            theme_total = len(
-                theme_df
+            total_theme = len(
+                theme_data
             )
 
-
-            sentiment_matrix.loc[
+            matrix.loc[
                 product,
                 theme,
             ] = (
-
-                percentage(
-
+                pct(
                     (
-                        theme_df[
+                        theme_data[
                             "Sentiment"
                         ]
                         == sentiment
                     ).sum(),
-
-                    theme_total,
+                    total_theme,
                 )
-
-                if theme_total > 0
-
+                if total_theme
                 else np.nan
             )
 
-
     fig = px.imshow(
-
-        sentiment_matrix,
-
+        matrix,
         text_auto=".1f",
-
         aspect="auto",
-
         color_continuous_scale=[
-            "#F0F3F5",
-            "#91ABC0",
+            "#F8FAFC",
+            "#B4C7DC",
             "#2F5D8C",
         ],
-
-        title=chart_title,
-
+        title=title,
         labels={
-            "color":
-                "Sentiment (%)",
+            "color": "Sentiment (%)"
         },
     )
 
-
     fig.update_traces(
-
         hovertemplate=(
-
-            "Product: %{y}<br>"
-
-            "Theme: %{x}<br>"
-
-            "Sentiment: %{z:.1f}%"
-
+            "Product: %{y}"
+            "<br>Theme: %{x}"
+            "<br>Sentiment: %{z:.1f}%"
             "<extra></extra>"
-        ),
+        )
     )
-
 
     with container:
 
         st.plotly_chart(
-
-            style_chart(
-                fig,
-                height=410,
-                show_legend=False,
-            ),
-
+            base_layout(fig, 410),
             use_container_width=True,
-
             config={
-                "displayModeBar": False,
+                "displayModeBar": False
             },
         )
 
 
-# ============================================================
-# RATING DISTRIBUTION
-# ============================================================
-
+# =========================================================
+# Customer Rating Distribution
+# =========================================================
 st.markdown(
-    """
-    <div class="section-title">
-        Customer Rating Distribution
-    </div>
-    """,
+    '<div class="section-title">Customer Rating Distribution</div>',
     unsafe_allow_html=True,
 )
 
-
 rating_rows = []
-
 
 for product in PRODUCT_ORDER:
 
-    product_df = filtered_df[
+    temp = filtered_df[
         filtered_df["Product"]
         == product
     ]
 
+    total = len(temp)
 
-    product_total = len(
-        product_df
-    )
-
-
-    if product_total == 0:
-
+    if total == 0:
         continue
-
 
     for star in range(1, 6):
 
-        star_count = (
-            product_df["Stars"]
-            == star
-        ).sum()
-
-
         rating_rows.append(
-
             {
-                "Product":
-                    product,
-
-                "Star":
-                    str(star),
-
-                "Percentage":
-                    percentage(
-                        star_count,
-                        product_total,
-                    ),
+                "Product": product,
+                "Star": str(star),
+                "Percentage": pct(
+                    (
+                        temp["Stars"]
+                        == star
+                    ).sum(),
+                    total,
+                ),
             }
         )
 
@@ -2126,544 +1311,445 @@ rating_distribution = pd.DataFrame(
 )
 
 
-fig = px.bar(
+if rating_distribution.empty:
 
-    rating_distribution,
+    st.info(
+        "No rating data available for the selected filters."
+    )
 
-    x="Star",
+else:
 
-    y="Percentage",
+    fig = px.bar(
+        rating_distribution,
+        x="Star",
+        y="Percentage",
+        color="Product",
+        barmode="group",
+        text=(
+            rating_distribution[
+                "Percentage"
+            ]
+            .round(0)
+            .astype(int)
+            .astype(str)
+            + "%"
+        ),
+        title="Customer Rating Distribution",
+        labels={
+            "Percentage": "Reviews (%)",
+            "Star": "Star Rating",
+        },
+        category_orders={
+            "Star": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+            ]
+        },
+        color_discrete_sequence=PRODUCT_COLORS,
+    )
 
-    color="Product",
+    fig.update_traces(
+        textposition="outside",
+        textfont_size=9,
+    )
 
-    barmode="group",
-
-    title="Customer Rating Distribution",
-
-    labels={
-        "Percentage":
-            "Reviews (%)",
-
-        "Star":
-            "Star Rating",
-    },
-
-    category_orders={
-        "Star": [
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-        ],
-    },
-
-    color_discrete_sequence=
-        PRODUCT_COLORS,
-)
-
-
-fig.update_traces(
-
-    texttemplate="%{y:.0f}%",
-
-    textposition="outside",
-)
-
-
-st.plotly_chart(
-
-    style_chart(
-        fig,
-        height=420,
-    ),
-
-    use_container_width=True,
-
-    config={
-        "displayModeBar": False,
-    },
-)
+    st.plotly_chart(
+        base_layout(fig, 400),
+        use_container_width=True,
+        config={
+            "displayModeBar": False
+        },
+    )
 
 
-# ============================================================
-# REVIEW TREND
-# ============================================================
-
+# =========================================================
+# Review Activity Over Time
+# =========================================================
 st.markdown(
-    """
-    <div class="section-title">
-        Review Activity Over Time
-    </div>
-    """,
+    '<div class="section-title">Review Activity Over Time</div>',
     unsafe_allow_html=True,
 )
 
-
 trend_data = (
     filtered_df
-    .dropna(
-        subset=["Posted On"]
-    )
+    .dropna(subset=["Posted On"])
     .copy()
 )
 
 
-monthly = (
+if trend_data.empty:
 
-    trend_data
+    st.info(
+        "No date information available for the selected filters."
+    )
 
-    .assign(
+else:
 
-        Month=(
-            trend_data["Posted On"]
-            .dt.to_period("M")
-            .dt.to_timestamp()
+    monthly = (
+        trend_data.assign(
+            Month=(
+                trend_data["Posted On"]
+                .dt.to_period("M")
+                .dt.to_timestamp()
+            )
+        )
+        .groupby(
+            [
+                "Month",
+                "Product",
+            ],
+            observed=True,
+        )
+        .size()
+        .reset_index(
+            name="Reviews"
         )
     )
 
-    .groupby(
-        [
-            "Month",
-            "Product",
-        ],
-        observed=True,
+    fig = px.line(
+        monthly,
+        x="Month",
+        y="Reviews",
+        color="Product",
+        markers=True,
+        title="Monthly Review Volume",
+        labels={
+            "Reviews": "Number of Reviews",
+            "Month": "Month",
+        },
+        color_discrete_sequence=PRODUCT_COLORS,
     )
 
-    .size()
-
-    .reset_index(
-        name="Reviews",
+    fig.update_layout(
+        hovermode="x unified"
     )
-)
+
+    st.plotly_chart(
+        base_layout(fig, 400),
+        use_container_width=True,
+        config={
+            "displayModeBar": False
+        },
+    )
 
 
-fig = px.line(
-
-    monthly,
-
-    x="Month",
-
-    y="Reviews",
-
-    color="Product",
-
-    markers=True,
-
-    title="Monthly Review Volume",
-
-    labels={
-        "Reviews":
-            "Number of Reviews",
-
-        "Month":
-            "Month",
-    },
-
-    color_discrete_sequence=
-        PRODUCT_COLORS,
-)
-
-
-fig.update_layout(
-    hovermode="x unified",
-)
-
-
-fig.update_traces(
-
-    line=dict(
-        width=2,
-    ),
-
-    marker=dict(
-        size=5,
-    ),
-)
-
-
-st.plotly_chart(
-
-    style_chart(
-        fig,
-        height=420,
-    ),
-
-    use_container_width=True,
-
-    config={
-        "displayModeBar": False,
-    },
-)
-
-
-# ============================================================
-# KEY CUSTOMER FEEDBACK
-# ============================================================
-
+# =========================================================
+# Key Customer Feedback
+# =========================================================
 st.markdown(
-    """
-    <div class="section-title">
-        Key Customer Feedback
-    </div>
-    """,
+    '<div class="section-title">Key Customer Feedback</div>',
     unsafe_allow_html=True,
 )
 
-
 strength_rows = []
-
 pain_rows = []
 
 
 for theme, column in THEME_COLS.items():
 
-    theme_df = filtered_df[
+    theme_data = filtered_df[
         filtered_df[column]
         == "Yes"
     ]
 
-
-    theme_total = len(
-        theme_df
+    total_theme = len(
+        theme_data
     )
 
-
-    if theme_total == 0:
-
+    if total_theme == 0:
         continue
 
-
-    positive_theme_count = (
-        theme_df["Sentiment"]
+    positive = (
+        theme_data["Sentiment"]
         == "positive"
     ).sum()
 
-
-    negative_theme_count = (
-        theme_df["Sentiment"]
+    negative = (
+        theme_data["Sentiment"]
         == "negative"
     ).sum()
 
-
     strength_rows.append(
-
         {
-            "Theme":
-                theme,
-
-            "Reviews":
-                theme_total,
-
-            "Positive %":
-                round(
-                    percentage(
-                        positive_theme_count,
-                        theme_total,
-                    ),
-                    1,
+            "Theme": theme,
+            "Reviews": total_theme,
+            "Positive %": round(
+                pct(
+                    positive,
+                    total_theme,
                 ),
+                1,
+            ),
         }
     )
-
 
     pain_rows.append(
-
         {
-            "Theme":
-                theme,
-
-            "Reviews":
-                theme_total,
-
-            "Negative %":
-                round(
-                    percentage(
-                        negative_theme_count,
-                        theme_total,
-                    ),
-                    1,
+            "Theme": theme,
+            "Reviews": total_theme,
+            "Negative %": round(
+                pct(
+                    negative,
+                    total_theme,
                 ),
+                1,
+            ),
         }
     )
 
 
-strengths = (
-
-    pd.DataFrame(
-        strength_rows
-    )
-
-    .sort_values(
-        [
-            "Positive %",
-            "Reviews",
-        ],
-
-        ascending=[
-            False,
-            False,
-        ],
-    )
-
-    .head(6)
+strengths = pd.DataFrame(
+    strength_rows
 )
 
+if not strengths.empty:
 
-pain_points = (
-
-    pd.DataFrame(
-        pain_rows
+    strengths = (
+        strengths
+        .sort_values(
+            [
+                "Positive %",
+                "Reviews",
+            ],
+            ascending=[
+                False,
+                False,
+            ],
+        )
+        .head(6)
     )
 
-    .sort_values(
-        [
-            "Negative %",
-            "Reviews",
-        ],
 
-        ascending=[
-            False,
-            False,
-        ],
-    )
-
-    .head(6)
+pain_points = pd.DataFrame(
+    pain_rows
 )
+
+if not pain_points.empty:
+
+    pain_points = (
+        pain_points
+        .sort_values(
+            [
+                "Negative %",
+                "Reviews",
+            ],
+            ascending=[
+                False,
+                False,
+            ],
+        )
+        .head(6)
+    )
 
 
 left, right = st.columns(2)
 
 
+# ---------------------------------------------------------
+# Customer Strengths
+# ---------------------------------------------------------
 with left:
 
     st.markdown(
         "### Customer Strengths"
     )
 
-
     st.dataframe(
-
         strengths,
-
         use_container_width=True,
-
         hide_index=True,
-
         column_config={
-
             "Positive %":
-
                 st.column_config.ProgressColumn(
-
                     "Positive %",
-
                     min_value=0,
-
                     max_value=100,
-
                     format="%.1f%%",
-                ),
+                )
         },
     )
 
 
+# ---------------------------------------------------------
+# Customer Pain Points
+# ---------------------------------------------------------
 with right:
 
     st.markdown(
         "### Customer Pain Points"
     )
 
-
     st.dataframe(
-
         pain_points,
-
         use_container_width=True,
-
         hide_index=True,
-
         column_config={
-
             "Negative %":
-
                 st.column_config.ProgressColumn(
-
                     "Negative %",
-
                     min_value=0,
-
                     max_value=100,
-
                     format="%.1f%%",
-                ),
+                )
         },
     )
 
 
-# ============================================================
-# PRODUCT SUMMARY
-# ============================================================
-
+# =========================================================
+# Product Summary
+# =========================================================
 st.markdown(
-    """
-    <div class="section-title">
-        Product Summary
-    </div>
-    """,
+    '<div class="section-title">Product Summary</div>',
     unsafe_allow_html=True,
 )
-
 
 summary_rows = []
 
 
 for product in PRODUCT_ORDER:
 
-    product_df = filtered_df[
+    temp = filtered_df[
         filtered_df["Product"]
         == product
     ]
 
+    total = len(temp)
 
-    product_total = len(
-        product_df
-    )
+    if total == 0:
 
-
-    if product_total == 0:
+        summary_rows.append(
+            {
+                "Product": product,
+                "Reviews": 0,
+                "Average Rating": np.nan,
+                "Positive %": np.nan,
+                "Neutral %": np.nan,
+                "Negative %": np.nan,
+            }
+        )
 
         continue
 
-
     summary_rows.append(
-
         {
-            "Product":
-                product,
-
-            # IMPORTANT:
-            # This is the exact same row count used
-            # in the Reviews by Product chart.
-            "Reviews":
-                product_total,
-
-            "Average Rating":
-                round(
-                    product_df["Stars"].mean(),
-                    2,
+            "Product": product,
+            "Reviews": total,
+            "Average Rating": round(
+                temp["Stars"].mean(),
+                2,
+            ),
+            "Positive %": round(
+                pct(
+                    (
+                        temp["Sentiment"]
+                        == "positive"
+                    ).sum(),
+                    total,
                 ),
-
-            "Positive %":
-                round(
-                    percentage(
-                        (
-                            product_df[
-                                "Sentiment"
-                            ]
-                            == "positive"
-                        ).sum(),
-
-                        product_total,
-                    ),
-                    1,
+                1,
+            ),
+            "Neutral %": round(
+                pct(
+                    (
+                        temp["Sentiment"]
+                        == "neutral"
+                    ).sum(),
+                    total,
                 ),
-
-            "Neutral %":
-                round(
-                    percentage(
-                        (
-                            product_df[
-                                "Sentiment"
-                            ]
-                            == "neutral"
-                        ).sum(),
-
-                        product_total,
-                    ),
-                    1,
+                1,
+            ),
+            "Negative %": round(
+                pct(
+                    (
+                        temp["Sentiment"]
+                        == "negative"
+                    ).sum(),
+                    total,
                 ),
-
-            "Negative %":
-                round(
-                    percentage(
-                        (
-                            product_df[
-                                "Sentiment"
-                            ]
-                            == "negative"
-                        ).sum(),
-
-                        product_total,
-                    ),
-                    1,
-                ),
+                1,
+            ),
         }
     )
 
 
-product_summary = (
-
-    pd.DataFrame(
-        summary_rows
-    )
-
-    .sort_values(
-        "Average Rating",
-        ascending=False,
-    )
+product_summary = pd.DataFrame(
+    summary_rows
+).sort_values(
+    "Average Rating",
+    ascending=False,
+    na_position="last",
 )
 
 
 st.dataframe(
-
     product_summary,
-
     use_container_width=True,
-
     hide_index=True,
+    column_config={
+
+        "Average Rating":
+            st.column_config.ProgressColumn(
+                "Average Rating",
+                min_value=0,
+                max_value=5,
+                format="%.2f",
+            ),
+
+        "Positive %":
+            st.column_config.ProgressColumn(
+                "Positive %",
+                min_value=0,
+                max_value=100,
+                format="%.1f%%",
+            ),
+
+        "Neutral %":
+            st.column_config.ProgressColumn(
+                "Neutral %",
+                min_value=0,
+                max_value=100,
+                format="%.1f%%",
+            ),
+
+        "Negative %":
+            st.column_config.ProgressColumn(
+                "Negative %",
+                min_value=0,
+                max_value=100,
+                format="%.1f%%",
+            ),
+    },
 )
 
 
-# ============================================================
-# FINAL COUNT RECONCILIATION
-# ============================================================
-
-# This check confirms that Product Summary counts add up
-# exactly to the Total Reviews KPI.
+# =========================================================
+# Internal Review Count Validation
+# =========================================================
+# This validation is intentionally NOT displayed on the
+# dashboard. It only shows an error if the product-level
+# review counts do not reconcile with the KPI total.
+# =========================================================
 
 summary_count_total = int(
     product_summary["Reviews"].sum()
 )
 
-
-if summary_count_total != FILTERED_REVIEW_COUNT:
+if summary_count_total != total_reviews:
 
     st.error(
         "Review count reconciliation failed: "
         f"Product Summary = {summary_count_total:,}, "
-        f"Total Reviews = {FILTERED_REVIEW_COUNT:,}."
+        f"Total Reviews = {total_reviews:,}."
     )
 
 
-# ============================================================
-# FOOTER
-# ============================================================
-
-st.markdown(
-    f"""
-    <div style="
-        margin-top:18px;
-        padding-top:10px;
-        border-top:1px solid #CDD8E2;
-        color:#637586;
-        font-size:12px;
-    ">
-        Showing <b>{FILTERED_REVIEW_COUNT:,}</b>
-        filtered reviews from
-        <b>{SOURCE_REVIEW_COUNT:,}</b>
-        source reviews.
-    </div>
-    """,
-    unsafe_allow_html=True,
+# =========================================================
+# Footer
+# =========================================================
+st.caption(
+    f"Showing {total_reviews:,} filtered reviews "
+    "from the Germany toothbrush review dataset."
 )
