@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 
 
 # =========================================================
-# Configuration
+# PAGE CONFIGURATION
 # =========================================================
 st.set_page_config(
     page_title="Germany Toothbrush Customer Review Dashboard",
@@ -19,10 +19,17 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
+# =========================================================
+# FILE CONFIGURATION
+# =========================================================
 DATA_FILE = Path(__file__).parent / "Germany_five toothbrush data.xlsx"
 SHEET_NAME = "Germany"
 
 
+# =========================================================
+# PRODUCT ORDER
+# =========================================================
 PRODUCT_ORDER = [
     "curaprox 5460",
     "Dr. Best Clean Pro Zwischenzahn",
@@ -32,6 +39,9 @@ PRODUCT_ORDER = [
 ]
 
 
+# =========================================================
+# CUSTOMER THEMES
+# =========================================================
 THEMES = [
     "Cleaning Performance",
     "Brushing Comfort",
@@ -48,103 +58,164 @@ THEME_COLS = {
 }
 
 
+# =========================================================
+# COLORS
+# =========================================================
 COLORS = {
     "positive": "#2E7D32",
-    "neutral": "#90A4AE",
-    "negative": "#C62828",
+    "neutral": "#7A858D",
+    "negative": "#B84A4A",
 }
 
 
 PRODUCT_COLORS = [
     "#2F5D8C",
     "#4F81BD",
-    "#6FA3D2",
-    "#8DB5D8",
-    "#B4C7DC",
+    "#6793B5",
+    "#7FA3BD",
+    "#9AB7CA",
 ]
 
 
 # =========================================================
-# Styling
+# GLOBAL STYLING
 # =========================================================
 st.markdown(
     """
-    <style>
+<style>
 
-        .block-container {
-            padding-top: 1.5rem;
-            padding-bottom: 2rem;
-            max-width: 1500px;
-        }
+.block-container {
+    padding-top: 1.2rem;
+    padding-bottom: 2rem;
+    max-width: 1500px;
+}
 
-        .dashboard-header {
-            background: linear-gradient(
-                135deg,
-                #173B5E,
-                #2F5D8C
-            );
-            padding: 24px 30px;
-            border-radius: 14px;
-            margin-bottom: 22px;
-            color: white;
-        }
+/* ==============================
+   Dashboard Header
+   ============================== */
 
-        .dashboard-header h1 {
-            color: white;
-            margin: 0 0 5px 0;
-            font-size: 30px;
-        }
+.dashboard-header {
+    background: linear-gradient(135deg, #173B5E, #2F5D8C);
+    padding: 24px 30px;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    color: white;
+}
 
-        .dashboard-header p {
-            color: #E2E8F0;
-            margin: 0;
-            font-size: 15px;
-        }
+.dashboard-header h1 {
+    color: white;
+    margin: 0 0 6px 0;
+    padding: 0;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+}
 
-        .section-title {
-            color: #173B5E;
-            font-size: 21px;
-            font-weight: 700;
-            margin: 24px 0 10px 0;
-            padding-bottom: 7px;
-            border-bottom: 2px solid #E2E8F0;
-        }
+.dashboard-header p {
+    color: #E2E8F0;
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    line-height: 1.5;
+}
 
-        [data-testid="stMetric"] {
-            background: white;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            padding: 14px 16px;
-        }
 
-        [data-testid="stMetricLabel"] {
-            color: #64748B !important;
-            font-size: 13px !important;
-        }
+/* ==============================
+   Section Titles
+   ============================== */
 
-        [data-testid="stMetricValue"] {
-            color: #173B5E !important;
-            font-size: 28px !important;
-        }
+.section-title {
+    color: #173B5E;
+    font-size: 21px;
+    font-weight: 700;
+    margin: 24px 0 10px 0;
+    padding-bottom: 7px;
+    border-bottom: 2px solid #D8E1E8;
+}
 
-        div[data-testid="stSidebar"] {
-            background-color: #F8FAFC;
-        }
 
-        .sidebar-note {
-            color: #64748B;
-            font-size: 12px;
-            line-height: 1.5;
-        }
+/* ==============================
+   KPI Cards
+   ============================== */
 
-    </style>
-    """,
+[data-testid="stMetric"] {
+    background: #FFFFFF;
+    border: 1px solid #C8D4DE;
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+
+[data-testid="stMetricLabel"] {
+    color: #637586 !important;
+    font-size: 13px !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #173B5E !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+}
+
+
+/* ==============================
+   Sidebar
+   ============================== */
+
+div[data-testid="stSidebar"] {
+    background-color: #F5F8FA;
+}
+
+.sidebar-note {
+    color: #637586;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* ==============================
+   Tables
+   ============================== */
+
+[data-testid="stDataFrame"] {
+    border-radius: 10px;
+}
+
+
+/* ==============================
+   Buttons
+   ============================== */
+
+.stButton > button {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+
+/* ==============================
+   Selectboxes / Multiselect
+   ============================== */
+
+div[data-baseweb="select"] {
+    border-radius: 8px;
+}
+
+
+/* ==============================
+   Remove unnecessary top space
+   ============================== */
+
+div[data-testid="stVerticalBlock"] > div {
+    gap: 0.5rem;
+}
+
+</style>
+""",
     unsafe_allow_html=True,
 )
 
 
 # =========================================================
-# Data Loading and Cleaning
+# DATA LOADING AND CLEANING
 # =========================================================
 @st.cache_data
 def load_data():
@@ -157,14 +228,17 @@ def load_data():
 
     data = pd.read_excel(
         DATA_FILE,
-        sheet_name=SHEET_NAME
+        sheet_name=SHEET_NAME,
     )
 
     data.columns = [
-        str(c).strip()
-        for c in data.columns
+        str(column).strip()
+        for column in data.columns
     ]
 
+    # -----------------------------------------------------
+    # Required columns
+    # -----------------------------------------------------
     required_columns = [
         "Product Name given",
         "Brand",
@@ -213,14 +287,19 @@ def load_data():
     )
 
     # -----------------------------------------------------
-    # Brand / Site
+    # Brand and Site
     # -----------------------------------------------------
-    for column in ["Brand", "Site"]:
-        data[column] = (
-            data[column]
-            .astype(str)
-            .str.strip()
-        )
+    data["Brand"] = (
+        data["Brand"]
+        .astype(str)
+        .str.strip()
+    )
+
+    data["Site"] = (
+        data["Site"]
+        .astype(str)
+        .str.strip()
+    )
 
     # -----------------------------------------------------
     # Sentiment standardization
@@ -285,32 +364,40 @@ def load_data():
         )
 
     # -----------------------------------------------------
-    # Dates and ratings
+    # Date
     # -----------------------------------------------------
     data["Posted On"] = pd.to_datetime(
         data["Posted On"],
-        errors="coerce"
-    )
-
-    data["Stars"] = pd.to_numeric(
-        data["Stars"],
-        errors="coerce"
+        errors="coerce",
     )
 
     # -----------------------------------------------------
-    # Keep only the five expected products
+    # Stars
+    # -----------------------------------------------------
+    data["Stars"] = pd.to_numeric(
+        data["Stars"],
+        errors="coerce",
+    )
+
+    # -----------------------------------------------------
+    # Keep only expected products
     # -----------------------------------------------------
     data = data[
         data["Product"].isin(PRODUCT_ORDER)
     ].copy()
 
+    # -----------------------------------------------------
+    # Product ordering
+    # -----------------------------------------------------
     data["Product"] = pd.Categorical(
         data["Product"],
         categories=PRODUCT_ORDER,
         ordered=True,
     )
 
-    # Remove only exact duplicate rows
+    # -----------------------------------------------------
+    # Remove exact duplicate rows only
+    # -----------------------------------------------------
     data = (
         data
         .drop_duplicates()
@@ -321,7 +408,7 @@ def load_data():
 
 
 # =========================================================
-# Load Data
+# LOAD DATA
 # =========================================================
 try:
 
@@ -337,14 +424,14 @@ except Exception as exc:
 
 
 # =========================================================
-# Helper Functions
+# HELPER FUNCTIONS
 # =========================================================
 def pct(part, total):
 
     if total == 0:
         return 0
 
-    return part / total * 100
+    return (part / total) * 100
 
 
 def apply_filters(
@@ -359,7 +446,7 @@ def apply_filters(
 
     filtered = data.copy()
 
-    # Product filter
+    # Product
     if (
         products
         and "All Products" not in products
@@ -369,21 +456,21 @@ def apply_filters(
             filtered["Product"].isin(products)
         ]
 
-    # Brand filter
+    # Brand
     if brands:
 
         filtered = filtered[
             filtered["Brand"].isin(brands)
         ]
 
-    # Site filter
+    # Site
     if sites:
 
         filtered = filtered[
             filtered["Site"].isin(sites)
         ]
 
-    # Sentiment filter
+    # Sentiment
     if sentiments:
 
         sentiment_values = [
@@ -397,7 +484,7 @@ def apply_filters(
             )
         ]
 
-    # Star filter
+    # Star Rating
     if star_range:
 
         filtered = filtered[
@@ -408,7 +495,7 @@ def apply_filters(
             )
         ]
 
-    # Date filter
+    # Review Date
     if (
         date_range
         and len(date_range) == 2
@@ -451,7 +538,7 @@ def base_layout(
         font=dict(
             family="Arial",
             size=12,
-            color="#334155",
+            color="#34495A",
         ),
 
         title=dict(
@@ -464,6 +551,7 @@ def base_layout(
         ),
 
         paper_bgcolor="white",
+
         plot_bgcolor="white",
 
         legend=dict(
@@ -477,7 +565,7 @@ def base_layout(
 
     fig.update_xaxes(
         showgrid=True,
-        gridcolor="#E2E8F0",
+        gridcolor="#D6E0E7",
         zeroline=False,
     )
 
@@ -490,34 +578,27 @@ def base_layout(
 
 
 # =========================================================
-# Header
+# DASHBOARD HEADER
+# =========================================================
+# IMPORTANT:
+# HTML starts directly after the triple quote so Streamlit
+# does not interpret it as a code block.
 # =========================================================
 st.markdown(
-    """
-    <div class="dashboard-header">
-
-        <h1>
-            Germany Toothbrush Customer Review Dashboard
-        </h1>
-
-        <p>
-            Customer perception, ratings, sentiment and key product themes
-        </p>
-
-    </div>
-    """,
+    """<div class="dashboard-header">
+<h1>Germany Toothbrush Customer Review Dashboard</h1>
+<p>Customer perception, ratings, sentiment and key product themes</p>
+</div>""",
     unsafe_allow_html=True,
 )
 
 
 # =========================================================
-# Sidebar Filters
+# SIDEBAR FILTERS
 # =========================================================
 with st.sidebar:
 
-    st.markdown(
-        "## Dashboard Filters"
-    )
+    st.markdown("## Dashboard Filters")
 
     # -----------------------------------------------------
     # Product
@@ -609,7 +690,7 @@ with st.sidebar:
     st.markdown("---")
 
     # -----------------------------------------------------
-    # Reset
+    # Reset Button
     # -----------------------------------------------------
     if st.button(
         "Reset Filters",
@@ -620,30 +701,21 @@ with st.sidebar:
         st.rerun()
 
     # -----------------------------------------------------
-    # Sidebar information
+    # Sidebar Information
     # -----------------------------------------------------
     st.markdown(
-        """
-        <div class="sidebar-note">
-
-        <b>Data scope</b><br>
-
-        Germany customer reviews across five
-        toothbrush products.
-
-        <br><br>
-
-        Missing theme values are kept as missing
-        and are not automatically treated as "No".
-
-        </div>
-        """,
+        """<div class="sidebar-note">
+<b>Data scope</b><br>
+Germany customer reviews across five toothbrush products.
+<br><br>
+Missing theme values are kept as missing and are not automatically treated as "No".
+</div>""",
         unsafe_allow_html=True,
     )
 
 
 # =========================================================
-# Apply Filters
+# APPLY FILTERS
 # =========================================================
 filtered_df = apply_filters(
     df,
@@ -657,7 +729,7 @@ filtered_df = apply_filters(
 
 
 # =========================================================
-# KPI Calculations
+# KPI CALCULATIONS
 # =========================================================
 total_reviews = len(filtered_df)
 
@@ -683,6 +755,7 @@ negative_pct = pct(
     total_reviews,
 )
 
+
 if (
     selected_products
     and "All Products"
@@ -702,14 +775,16 @@ else:
 
 
 # =========================================================
-# KPI Cards
+# KPI CARDS
 # =========================================================
 k1, k2, k3, k4, k5 = st.columns(5)
+
 
 k1.metric(
     "Total Reviews",
     f"{total_reviews:,}",
 )
+
 
 k2.metric(
     "Average Rating",
@@ -720,15 +795,18 @@ k2.metric(
     ),
 )
 
+
 k3.metric(
     "Positive Sentiment",
     f"{positive_pct:.1f}%",
 )
 
+
 k4.metric(
     "Negative Sentiment",
     f"{negative_pct:.1f}%",
 )
+
 
 k5.metric(
     "Products",
@@ -737,7 +815,7 @@ k5.metric(
 
 
 # =========================================================
-# Product Performance
+# PRODUCT PERFORMANCE
 # =========================================================
 st.markdown(
     '<div class="section-title">Product Performance</div>',
@@ -861,7 +939,7 @@ with right:
 
 
 # =========================================================
-# Customer Sentiment
+# CUSTOMER SENTIMENT
 # =========================================================
 st.markdown(
     '<div class="section-title">Customer Sentiment</div>',
@@ -876,7 +954,7 @@ left, right = st.columns(2)
 # ---------------------------------------------------------
 with left:
 
-    rows = []
+    sentiment_rows = []
 
     for product in PRODUCT_ORDER:
 
@@ -885,9 +963,9 @@ with left:
             == product
         ]
 
-        total = len(temp)
+        product_total = len(temp)
 
-        if total == 0:
+        if product_total == 0:
             continue
 
         for sentiment in [
@@ -896,7 +974,7 @@ with left:
             "negative",
         ]:
 
-            rows.append(
+            sentiment_rows.append(
                 {
                     "Product": product,
                     "Sentiment": sentiment.title(),
@@ -905,13 +983,13 @@ with left:
                             temp["Sentiment"]
                             == sentiment
                         ).sum(),
-                        total,
+                        product_total,
                     ),
                 }
             )
 
     sentiment_product = pd.DataFrame(
-        rows
+        sentiment_rows
     )
 
     if sentiment_product.empty:
@@ -997,11 +1075,10 @@ with right:
         "Reviews",
     ]
 
-    sentiment_total[
-        "Sentiment"
-    ] = sentiment_total[
-        "Sentiment"
-    ].str.title()
+    sentiment_total["Sentiment"] = (
+        sentiment_total["Sentiment"]
+        .str.title()
+    )
 
     fig = px.pie(
         sentiment_total,
@@ -1031,7 +1108,7 @@ with right:
 
 
 # =========================================================
-# Customer Themes
+# CUSTOMER THEMES
 # =========================================================
 st.markdown(
     '<div class="section-title">What Customers Talk About</div>',
@@ -1042,7 +1119,7 @@ theme_rows = []
 
 for theme, column in THEME_COLS.items():
 
-    count = (
+    theme_count = (
         filtered_df[column]
         == "Yes"
     ).sum()
@@ -1051,11 +1128,12 @@ for theme, column in THEME_COLS.items():
         {
             "Theme": theme,
             "Percentage": pct(
-                count,
+                theme_count,
                 total_reviews,
             ),
         }
     )
+
 
 theme_summary = (
     pd.DataFrame(theme_rows)
@@ -1064,6 +1142,7 @@ theme_summary = (
         ascending=True,
     )
 )
+
 
 fig = px.bar(
     theme_summary,
@@ -1098,13 +1177,14 @@ st.plotly_chart(
 
 
 # =========================================================
-# Product vs Customer Themes
+# PRODUCT VS CUSTOMER THEMES
 # =========================================================
 theme_matrix = pd.DataFrame(
     index=PRODUCT_ORDER,
     columns=THEMES,
     dtype=float,
 )
+
 
 for product in PRODUCT_ORDER:
 
@@ -1165,7 +1245,7 @@ st.plotly_chart(
 
 
 # =========================================================
-# Customer Sentiment by Theme
+# CUSTOMER SENTIMENT BY THEME
 # =========================================================
 st.markdown(
     '<div class="section-title">Customer Sentiment by Theme</div>',
@@ -1211,7 +1291,7 @@ for container, sentiment, title in [
                 == "Yes"
             ]
 
-            total_theme = len(
+            theme_total = len(
                 theme_data
             )
 
@@ -1221,14 +1301,12 @@ for container, sentiment, title in [
             ] = (
                 pct(
                     (
-                        theme_data[
-                            "Sentiment"
-                        ]
+                        theme_data["Sentiment"]
                         == sentiment
                     ).sum(),
-                    total_theme,
+                    theme_total,
                 )
-                if total_theme
+                if theme_total
                 else np.nan
             )
 
@@ -1268,7 +1346,7 @@ for container, sentiment, title in [
 
 
 # =========================================================
-# Customer Rating Distribution
+# CUSTOMER RATING DISTRIBUTION
 # =========================================================
 st.markdown(
     '<div class="section-title">Customer Rating Distribution</div>',
@@ -1277,6 +1355,7 @@ st.markdown(
 
 rating_rows = []
 
+
 for product in PRODUCT_ORDER:
 
     temp = filtered_df[
@@ -1284,9 +1363,9 @@ for product in PRODUCT_ORDER:
         == product
     ]
 
-    total = len(temp)
+    product_total = len(temp)
 
-    if total == 0:
+    if product_total == 0:
         continue
 
     for star in range(1, 6):
@@ -1300,7 +1379,7 @@ for product in PRODUCT_ORDER:
                         temp["Stars"]
                         == star
                     ).sum(),
-                    total,
+                    product_total,
                 ),
             }
         )
@@ -1366,7 +1445,7 @@ else:
 
 
 # =========================================================
-# Review Activity Over Time
+# REVIEW ACTIVITY OVER TIME
 # =========================================================
 st.markdown(
     '<div class="section-title">Review Activity Over Time</div>',
@@ -1375,7 +1454,9 @@ st.markdown(
 
 trend_data = (
     filtered_df
-    .dropna(subset=["Posted On"])
+    .dropna(
+        subset=["Posted On"]
+    )
     .copy()
 )
 
@@ -1437,7 +1518,7 @@ else:
 
 
 # =========================================================
-# Key Customer Feedback
+# KEY CUSTOMER FEEDBACK
 # =========================================================
 st.markdown(
     '<div class="section-title">Key Customer Feedback</div>',
@@ -1455,11 +1536,11 @@ for theme, column in THEME_COLS.items():
         == "Yes"
     ]
 
-    total_theme = len(
+    theme_total = len(
         theme_data
     )
 
-    if total_theme == 0:
+    if theme_total == 0:
         continue
 
     positive = (
@@ -1475,11 +1556,11 @@ for theme, column in THEME_COLS.items():
     strength_rows.append(
         {
             "Theme": theme,
-            "Reviews": total_theme,
+            "Reviews": theme_total,
             "Positive %": round(
                 pct(
                     positive,
-                    total_theme,
+                    theme_total,
                 ),
                 1,
             ),
@@ -1489,11 +1570,11 @@ for theme, column in THEME_COLS.items():
     pain_rows.append(
         {
             "Theme": theme,
-            "Reviews": total_theme,
+            "Reviews": theme_total,
             "Negative %": round(
                 pct(
                     negative,
-                    total_theme,
+                    theme_total,
                 ),
                 1,
             ),
@@ -1504,6 +1585,7 @@ for theme, column in THEME_COLS.items():
 strengths = pd.DataFrame(
     strength_rows
 )
+
 
 if not strengths.empty:
 
@@ -1526,6 +1608,7 @@ if not strengths.empty:
 pain_points = pd.DataFrame(
     pain_rows
 )
+
 
 if not pain_points.empty:
 
@@ -1599,7 +1682,7 @@ with right:
 
 
 # =========================================================
-# Product Summary
+# PRODUCT SUMMARY
 # =========================================================
 st.markdown(
     '<div class="section-title">Product Summary</div>',
@@ -1616,9 +1699,9 @@ for product in PRODUCT_ORDER:
         == product
     ]
 
-    total = len(temp)
+    product_total = len(temp)
 
-    if total == 0:
+    if product_total == 0:
 
         summary_rows.append(
             {
@@ -1636,38 +1719,42 @@ for product in PRODUCT_ORDER:
     summary_rows.append(
         {
             "Product": product,
-            "Reviews": total,
+            "Reviews": product_total,
+
             "Average Rating": round(
                 temp["Stars"].mean(),
                 2,
             ),
+
             "Positive %": round(
                 pct(
                     (
                         temp["Sentiment"]
                         == "positive"
                     ).sum(),
-                    total,
+                    product_total,
                 ),
                 1,
             ),
+
             "Neutral %": round(
                 pct(
                     (
                         temp["Sentiment"]
                         == "neutral"
                     ).sum(),
-                    total,
+                    product_total,
                 ),
                 1,
             ),
+
             "Negative %": round(
                 pct(
                     (
                         temp["Sentiment"]
                         == "negative"
                     ).sum(),
-                    total,
+                    product_total,
                 ),
                 1,
             ),
@@ -1726,11 +1813,10 @@ st.dataframe(
 
 
 # =========================================================
-# Internal Review Count Validation
+# INTERNAL REVIEW COUNT VALIDATION
 # =========================================================
-# This validation is intentionally NOT displayed on the
-# dashboard. It only shows an error if the product-level
-# review counts do not reconcile with the KPI total.
+# This does NOT display a validation card.
+# It only displays an error if the counts do not reconcile.
 # =========================================================
 
 summary_count_total = int(
@@ -1747,7 +1833,7 @@ if summary_count_total != total_reviews:
 
 
 # =========================================================
-# Footer
+# FOOTER
 # =========================================================
 st.caption(
     f"Showing {total_reviews:,} filtered reviews "
