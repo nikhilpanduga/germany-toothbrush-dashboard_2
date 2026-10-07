@@ -88,8 +88,6 @@ PRODUCT_COLORS = {
     "meridol base": "#6B7A90",
 }
 BLUE_SCALE = [[0, "#EEF4FB"], [1, "#6FA8E0"]]
-GREEN_SCALE = [[0, "#EAF6F3"], [1, "#6CC4B0"]]
-RED_SCALE = [[0, "#FBEEEE"], [1, "#EE9A9E"]]
 
 
 def _st_version() -> tuple:
@@ -408,21 +406,17 @@ def rank_themes(stats: pd.DataFrame, by: str) -> pd.DataFrame:
 
 
 def product_theme_matrices(df: pd.DataFrame):
-    """Product x Theme matrices: penetration %, positive %, negative %, and mention counts."""
+    """Product x Theme matrices: share of each product's reviews mentioning the theme (%), and mention counts."""
     products = ordered_products(df)
     pen = pd.DataFrame(np.nan, index=products, columns=list(THEMES))
-    pos, neg, cnt = pen.copy(), pen.copy(), pen.copy()
+    cnt = pen.copy()
     for product in products:
         sub = df[df["Product"] == product]
         for theme, col in THEMES.items():
-            mentioned = sub[sub[col] == "Yes"]
-            n = len(mentioned)
+            n = int((sub[col] == "Yes").sum())
             cnt.loc[product, theme] = n
             pen.loc[product, theme] = n / len(sub) * 100 if len(sub) else np.nan
-            if n:
-                pos.loc[product, theme] = (mentioned["Sentiment"] == "positive").mean() * 100
-                neg.loc[product, theme] = (mentioned["Sentiment"] == "negative").mean() * 100
-    return pen, pos, neg, cnt
+    return pen, cnt
 
 
 def compute_takeaways(df: pd.DataFrame) -> list:
@@ -755,7 +749,7 @@ def render_sentiment(df: pd.DataFrame):
 
 def render_themes(df: pd.DataFrame):
     section("What Customers Talk About", "The topics customers mention most, and how each product compares")
-    pen, _, _, cnt = product_theme_matrices(df)
+    pen, cnt = product_theme_matrices(df)
     zmax = max(float(np.nanmax(pen.values)), 10.0) if pen.notna().any().any() else 100.0
     c1, c2 = st.columns(2, gap="large")
     with c1:
@@ -764,18 +758,6 @@ def render_themes(df: pd.DataFrame):
     with c2:
         chart_header("Themes by Product", "% of each product's reviews mentioning the theme")
         show_chart(heatmap(pen, cnt, BLUE_SCALE, zmax=zmax))
-
-
-def render_theme_sentiment(df: pd.DataFrame):
-    section("Customer Sentiment by Theme", "Whether customers speak positively or negatively about each theme")
-    _, pos, neg, cnt = product_theme_matrices(df)
-    c1, c2 = st.columns(2, gap="large")
-    with c1:
-        chart_header("Positive Sentiment by Theme", "% of theme-related reviews that are positive")
-        show_chart(heatmap(pos, cnt, GREEN_SCALE))
-    with c2:
-        chart_header("Negative Sentiment by Theme", "% of theme-related reviews that are negative")
-        show_chart(heatmap(neg, cnt, RED_SCALE))
 
 
 def time_view_selector(key: str) -> str:
@@ -864,7 +846,6 @@ def main():
     render_rating_distribution(df)
     render_sentiment(df)
     render_themes(df)
-    render_theme_sentiment(df)
     render_trend(df)
     render_feedback_tables(df)
     render_summary_table(df)
