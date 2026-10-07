@@ -26,7 +26,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-DATA_FILE = "Germany_five toothbrush data.xlsx"
+DATA_FILE = "toothbrush data.xlsx"
 SHEET_NAME = "Germany"
 
 PRODUCTS = [
