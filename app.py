@@ -1,5 +1,5 @@
 # app.py
-# Germany Toothbrush Customer Review Dashboard
+# Toothbrush Customer Review Dashboard (multi-market)
 # Run with:  streamlit run app.py
 # Requires:  pip install streamlit pandas plotly numpy openpyxl
 from __future__ import annotations
@@ -20,14 +20,17 @@ import streamlit as st
 # 1. CONFIGURATION
 # ============================================================
 st.set_page_config(
-    page_title="Toothbrush Review Dashboard",
+    page_title="Toothbrush Customer Review Dashboard",
     page_icon="🪥",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-DATA_FILE = "toothbrush data.xlsx"
+DATA_FILE = "Germany_five toothbrush data.xlsx"
 SHEET_NAME = "Germany"
+
+DASHBOARD_TITLE = "Toothbrush Customer Review Dashboard"
+DASHBOARD_SUBTITLE = "Customer perception, ratings, sentiment and key product themes across markets"
 
 PRODUCTS = [
     "curaprox 5460",
@@ -59,6 +62,13 @@ SENTIMENTS = ["positive", "neutral", "negative"]
 MIN_PRODUCT_REVIEWS = 10   # minimum reviews for a product to be ranked in "Key Takeaways"
 MIN_THEME_REVIEWS = 10     # minimum theme mentions for a theme to be ranked as strength / pain point
 CHART_HEIGHT = 400
+
+# Time views for the trend charts: label -> (pandas period alias, pandas range alias, unit name)
+TIME_VIEWS = {
+    "Monthly": ("M", "MS", "month"),
+    "Quarterly": ("Q", "QS", "quarter"),
+    "Yearly": ("Y", "YS", "year"),
+}
 
 # ---- Colour palette -------------------------------------------------------
 NAVY = "#14325C"
@@ -119,6 +129,10 @@ div[data-testid="stSliderThumbValue"], div[data-testid="stSliderTickBarMin"], di
 .dash-header { padding: 4px 0 22px 0; }
 .dash-title { font-size: 2.05rem; font-weight: 700; color: #14325C; margin: 0; letter-spacing: -0.5px; line-height: 1.2; }
 .dash-subtitle { font-size: 1rem; color: #6B7689; margin: 6px 0 0 0; }
+.dash-scope {
+    display: inline-block; margin-top: 12px; padding: 5px 14px; border-radius: 999px;
+    background: #E3EDF9; color: #14325C; font-size: 0.82rem; font-weight: 500;
+}
 
 /* KPI cards */
 .kpi-card {
@@ -252,7 +266,7 @@ def clean_data(raw: pd.DataFrame) -> pd.DataFrame:
     df = df[df["Product"].notna()].copy()
 
     # Remove duplicate reviews
-    dedupe_cols = [c for c in ["Product", "Site", "Title", "Text", "Posted On", "Stars"] if c in df.columns]
+    dedupe_cols = [c for c in ["Product", "Country", "Site", "Title", "Text", "Posted On", "Stars"] if c in df.columns]
     return df.drop_duplicates(subset=dedupe_cols).reset_index(drop=True)
 
 
@@ -558,37 +572,45 @@ def heatmap(pct: pd.DataFrame, counts: pd.DataFrame, colorscale, zmax: float = 1
     return style_fig(fig)
 
 
-# ---- Time charts ----------------------------------------------------------
+# ---- Time charts (Monthly / Quarterly / Yearly) ---------------------------
+def period_label(d: pd.Timestamp, view: str) -> str:
+    if view == "Quarterly":
+        return f"Q{(d.month - 1) // 3 + 1} {d.year}"
+    if view == "Yearly":
+        return str(d.year)
+    return d.strftime("%b %Y")
+
+
 def add_period(df: pd.DataFrame, view: str):
-    """Add a 'Period' column (month or quarter start) and return the complete period range."""
-    freq, range_freq = ("M", "MS") if view == "Monthly" else ("Q", "QS")
+    """Add a 'Period' column (start of month/quarter/year) and return the complete period range."""
+    period_alias, range_alias, _ = TIME_VIEWS[view]
     dated = df.dropna(subset=["Posted On"]).copy()
-    dated["Period"] = dated["Posted On"].dt.to_period(freq).dt.to_timestamp()
-    full_range = pd.date_range(dated["Period"].min(), dated["Period"].max(), freq=range_freq)
+    dated["Period"] = dated["Posted On"].dt.to_period(period_alias).dt.to_timestamp()
+    full_range = pd.date_range(dated["Period"].min(), dated["Period"].max(), freq=range_alias)
     return dated, full_range
 
 
 def apply_time_axis(fig: go.Figure, full_range: pd.DatetimeIndex, view: str, ytitle: str):
-    if view == "Quarterly":
-        fig.update_xaxes(tickvals=list(full_range),
-                         ticktext=[f"Q{(d.month - 1) // 3 + 1} {d.year}" for d in full_range])
-    else:
+    if view == "Monthly":
         n = len(full_range)
         dtick = "M1" if n <= 8 else "M2" if n <= 16 else "M3" if n <= 36 else "M6"
         fig.update_xaxes(tickformat="%b %Y", dtick=dtick)
+    else:  # quarterly / yearly: label every period explicitly
+        fig.update_xaxes(tickvals=list(full_range), ticktext=[period_label(d, view) for d in full_range])
     fig.update_xaxes(title=None)
     fig.update_yaxes(title=ytitle)
 
 
 def chart_review_volume(df: pd.DataFrame, view: str) -> go.Figure:
     dated, full_range = add_period(df, view)
+    labels = [period_label(d, view) for d in full_range]
     fig = go.Figure()
     for product in ordered_products(dated):
         counts = dated[dated["Product"] == product].groupby("Period").size().reindex(full_range, fill_value=0)
         fig.add_trace(go.Scatter(
-            name=product, x=counts.index, y=counts.values, mode="lines+markers",
+            name=product, x=counts.index, y=counts.values, customdata=labels, mode="lines+markers",
             line=dict(color=PRODUCT_COLORS.get(product, BLUE), width=2.5), marker=dict(size=6),
-            hovertemplate=product + "<br>%{x|%b %Y}: %{y:,} reviews<extra></extra>",
+            hovertemplate=product + "<br>%{customdata}: %{y:,} reviews<extra></extra>",
         ))
     fig.update_yaxes(rangemode="tozero")
     apply_time_axis(fig, full_range, view, "Number of Reviews")
@@ -597,13 +619,14 @@ def chart_review_volume(df: pd.DataFrame, view: str) -> go.Figure:
 
 def chart_rating_trend(df: pd.DataFrame, view: str) -> go.Figure:
     dated, full_range = add_period(df, view)
+    labels = [period_label(d, view) for d in full_range]
     fig = go.Figure()
     for product in ordered_products(dated):
         avg = dated[dated["Product"] == product].groupby("Period")["Stars"].mean().reindex(full_range)
         fig.add_trace(go.Scatter(
-            name=product, x=avg.index, y=avg.values, mode="lines+markers", connectgaps=True,
+            name=product, x=avg.index, y=avg.values, customdata=labels, mode="lines+markers", connectgaps=True,
             line=dict(color=PRODUCT_COLORS.get(product, BLUE), width=2.5), marker=dict(size=6),
-            hovertemplate=product + "<br>%{x|%b %Y}: %{y:.2f} ★<extra></extra>",
+            hovertemplate=product + "<br>%{customdata}: %{y:.2f} ★<extra></extra>",
         ))
     fig.update_yaxes(range=[1, 5], dtick=1)
     apply_time_axis(fig, full_range, view, "Average Rating (out of 5)")
@@ -656,12 +679,18 @@ def chart_header(title: str, caption: str = ""):
     st.markdown(f'<div class="chart-caption">{html.escape(caption) or "&nbsp;"}</div>', unsafe_allow_html=True)
 
 
-def render_header():
-    st.markdown(
-        '<div class="dash-header"><p class="dash-title">Germany Toothbrush Customer Review Dashboard</p>'
-        '<p class="dash-subtitle">Customer perception, ratings, sentiment and key product themes</p></div>',
-        unsafe_allow_html=True,
-    )
+def header_html(scope: str = "") -> str:
+    scope_html = f'<div class="dash-scope">{html.escape(scope)}</div>' if scope else ""
+    return (f'<div class="dash-header"><p class="dash-title">{html.escape(DASHBOARD_TITLE)}</p>'
+            f'<p class="dash-subtitle">{html.escape(DASHBOARD_SUBTITLE)}</p>{scope_html}</div>')
+
+
+def scope_text(df: pd.DataFrame) -> str:
+    """Short line describing which markets and products are currently in view."""
+    countries = sorted(df["Country"].unique())
+    markets = ", ".join(countries) if len(countries) <= 6 else f"{len(countries)} markets"
+    n_products = df["Product"].nunique()
+    return f"Markets in view: {markets}  ·  {n_products} product{'s' if n_products != 1 else ''}"
 
 
 def kpi_card(label: str, value: str, sub: str, accent: str) -> str:
@@ -749,19 +778,24 @@ def render_theme_sentiment(df: pd.DataFrame):
         show_chart(heatmap(neg, cnt, RED_SCALE))
 
 
+def time_view_selector(key: str) -> str:
+    return st.radio("Time view", list(TIME_VIEWS), horizontal=True, key=key, label_visibility="collapsed")
+
+
 def render_trend(df: pd.DataFrame):
     section("Review Activity Over Time", "Whether review volume and satisfaction are rising or falling")
     if not df["Posted On"].notna().any():
         st.info("No review dates available for the current selection.")
         return
-    view = st.radio("View by", ["Monthly", "Quarterly"], horizontal=True, key="trend_view")
-    unit = "month" if view == "Monthly" else "quarter"
     c1, c2 = st.columns(2, gap="large")
     with c1:
-        chart_header("Review Volume", f"Number of reviews by {unit}")
+        chart_header("Review Volume", "Number of reviews per period; choose Monthly, Quarterly or Yearly")
+        view = time_view_selector("volume_view")
         show_chart(chart_review_volume(df, view))
     with c2:
-        chart_header("Average Rating Over Time", f"Mean star rating by {unit} (periods with few reviews can be volatile)")
+        chart_header("Average Rating Over Time",
+                     "Mean star rating per period (periods with few reviews can be volatile)")
+        view = time_view_selector("rating_view")
         show_chart(chart_rating_trend(df, view))
 
 
@@ -794,7 +828,8 @@ def render_summary_table(df: pd.DataFrame):
 # ============================================================
 def main():
     st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
-    render_header()
+    header_slot = st.empty()  # filled again later with the markets currently in view
+    header_slot.markdown(header_html(), unsafe_allow_html=True)
 
     source, mtime, uploaded = find_data_source()
     if source is None and uploaded is not None:
@@ -820,6 +855,8 @@ def main():
     if df.empty:
         st.warning("No reviews match the current filters. Try widening your selection or click Reset Filters.")
         st.stop()
+
+    header_slot.markdown(header_html(scope_text(df)), unsafe_allow_html=True)
 
     render_kpis(df)
     render_takeaways(df)
