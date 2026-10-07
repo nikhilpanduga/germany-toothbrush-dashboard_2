@@ -20,7 +20,7 @@ import streamlit as st
 # 1. CONFIGURATION
 # ============================================================
 st.set_page_config(
-    page_title="Germany Toothbrush Review Dashboard",
+    page_title="Toothbrush Review Dashboard",
     page_icon="🪥",
     layout="wide",
     initial_sidebar_state="expanded",
